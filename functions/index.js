@@ -1,6 +1,3 @@
-//npm install -g create-react-app
-//create-react-app prod-exercise
-
 const functions = require('firebase-functions');
 
 //bring express node js
