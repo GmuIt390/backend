@@ -1,4 +1,5 @@
 const functions = require('firebase-functions');
+//@@@@@npm install -g firebase-tools
 
 //bring express node js
 //npm install --save express
