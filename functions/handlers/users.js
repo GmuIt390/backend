@@ -6,7 +6,11 @@ const config = require('../util/config');
 const firebase = require('firebase');
 firebase.initializeApp(config);
 
-const { validateSignupData,validateLoginData,reduceUserDetails } = require('../util/validate');
+const {
+	validateSignupData,
+	validateLoginData,
+	reduceUserDetails 
+ } = require('../util/validate');
 
 //signup method
 exports.signup = (request, response) => {
@@ -30,42 +34,42 @@ exports.signup = (request, response) => {
     let token,userId; //initialize token and userId object
     //take json to add to db after authenticating data
     db.doc(`/users/${newUser.handle}`).get()
-        //check if user exist: create user
-        .then((doc) => {
-            if(doc.exists){
-                return response.status(400).json({ handle: 'this handle is already taken'});
-            } else {
-                return firebase.auth().createUserWithEmailAndPassword(newUser.email, newUser.password);
-            }
-        })
-        //return token after user created
-        .then((data) => {
-            userId = data.user.uid; //get user uid
-            return data.user.getIdToken();
-        })
-        //fields for return token
-        .then((idtoken) => {
-            token = idtoken;
-            const userCredentials = {
-                handle: newUser.handle,
-                email: newUser.email,
-                createdAt: new Date().toISOString(),
-                imageUrl: `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${noImg}?alt=media`,
-                userId
-            };
-            return db.doc(`/users/${newUser.handle}`).set(userCredentials);
-        })
-        .then(() => {
-            return response.status(201).json({ token })
-        })
-        .catch((err) => {
-            console.error(err);
-            if(err.code === 'auth/email-already-in-use'){
-                return response.status(400).json({ email: 'email is already in use'});
-            } else {
-                return response.status(500).json({ general: 'something went wrong, please try again'});
-            }
-        });
+	//check if user exist: create user
+	.then((doc) => {
+		if(doc.exists){
+			return response.status(400).json({ handle: 'this handle is already taken'});
+		} else {
+			return firebase.auth().createUserWithEmailAndPassword(newUser.email, newUser.password);
+		}
+	})
+	//return token after user created
+	.then((data) => {
+		userId = data.user.uid; //get user uid
+		return data.user.getIdToken();
+	})
+	//fields for return token
+	.then((idtoken) => {
+		token = idtoken;
+		const userCredentials = {
+			handle: newUser.handle,
+			email: newUser.email,
+			createdAt: new Date().toISOString(),
+			imageUrl: `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${noImg}?alt=media`,
+			userId
+		};
+		return db.doc(`/users/${newUser.handle}`).set(userCredentials);
+	})
+	.then(() => {
+		return response.status(201).json({ token })
+	})
+	.catch((err) => {
+		console.error(err);
+		if(err.code === 'auth/email-already-in-use'){
+			return response.status(400).json({ email: 'email is already in use'});
+		} else {
+			return response.status(500).json({ general: 'something went wrong, please try again'});
+		}
+	});
 }
 
 //login method
@@ -83,24 +87,24 @@ exports.login = (request,response) => {
 
     //login user
     firebase.auth().signInWithEmailAndPassword(user.email,user.password)
-        //return token
-        .then((data) => {
-            return data.user.getIdToken();
-        })
-        .then((token) => {
-            return response.json({token});
-        })
-        .catch((err) => {
-            console.error(err);
-            //auth/wrong-password
-            //auth/user-not-found 
-            if(err.code === 'auth/wrong-password') {
-                return response.status(403).json({ general: 'wrong credentials, please try again' });
-            }
-            else {
-                return response.status(500).json({ general: 'wrong credentials, please try again' });
-            }
-        });
+	//return token
+	.then((data) => {
+		return data.user.getIdToken();
+	})
+	.then((token) => {
+		return response.json({token});
+	})
+	.catch((err) => {
+		console.error(err);
+		//auth/wrong-password
+		//auth/user-not-found 
+		if(err.code === 'auth/wrong-password') {
+			return response.status(403).json({ general: 'wrong credentials, please try again' });
+		}
+		else {
+			return response.status(500).json({ general: 'wrong credentials, please try again' });
+		}
+	});
 }
 
 //TODO add more variables for profile??
@@ -110,13 +114,13 @@ exports.addUserDetails = (request, response) => {
 
     //take json to add to db after authenticating data
     db.doc(`/users/${request.user.handle}`).update(userDetails)
-        .then(() => {
-            return response.json({ message: 'details added successfully'});
-        })
-        .catch((err) => {
-            console.error(err);
-            return response.status(500).json({ error: err.code });
-        })
+	.then(() => {
+		return response.json({ message: 'details added successfully'});
+	})
+	.catch((err) => {
+		console.error(err);
+		return response.status(500).json({ error: err.code });
+	})
 }
 
 //upload profile image method
@@ -184,21 +188,21 @@ exports.getAuthenticatedUser = (request,response) => {
 
     //get user details from db
     db.doc(`/users/${request.user.handle}`).get()
-        .then((doc) => {
-            if(doc.exists){
-                userData.credentials = doc.data();
-                return db.collection('likes').where('userHandle', '==', request.user.handle).get();
-            }
-        })
-        .then((data) => {
-            userData.likes = [];
-            data.forEach((doc) => {
-                userData.likes.push(doc.data());
-            })
-            return response.json(userData);
-        })
-        .catch(err => {
-            console.error(err);
-            return response.status(500).json({ error: err.code })
-        })
+	.then((doc) => {
+		if(doc.exists){
+			userData.credentials = doc.data();
+			return db.collection('likes').where('userHandle', '==', request.user.handle).get();
+		}
+	})
+	.then((data) => {
+		userData.likes = [];
+		data.forEach((doc) => {
+			userData.likes.push(doc.data());
+		})
+		return response.json(userData);
+	})
+	.catch(err => {
+		console.error(err);
+		return response.status(500).json({ error: err.code })
+	})
 }
