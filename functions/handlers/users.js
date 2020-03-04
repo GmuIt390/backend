@@ -6,6 +6,7 @@ const config = require('../util/config');
 const firebase = require('firebase');
 firebase.initializeApp(config);
 
+//bring validation services
 const {
 	validateSignupData,
 	validateLoginData,
@@ -24,11 +25,11 @@ exports.signup = (request, response) => {
 
     //bring validation method and validates signup
     const { valid,errors } = validateSignupData(newUser);
-
     if (!valid) {
         return response.status(400).json(errors);
     }
-
+	
+	//default signup profile image
     const noImg = 'no-img.png';
 
     let token,userId; //initialize token and userId object
@@ -74,13 +75,14 @@ exports.signup = (request, response) => {
 
 //login method
 exports.login = (request,response) => {
+	//store json into user object
     const user = {
         email: request.body.email,
         password: request.body.password
     }
 
+	//validate user object
     const { valid,errors } = validateLoginData(user);
-
     if (!valid) {
         return response.status(400).json(errors);
     }
@@ -137,6 +139,7 @@ exports.uploadImage = (request, response) => {
     let imageFileName;
     let imageToBeUploaded = {};
     
+	//format image
     busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
         if(mimetype !== 'image/jpeg' && mimetype !== 'image/png'){
             return response.status(400).json({ error: 'wrong file type submitted'});
@@ -194,6 +197,7 @@ exports.getAuthenticatedUser = (request,response) => {
 			return db.collection('likes').where('userHandle', '==', request.user.handle).get();
 		}
 	})
+	//get number of likes
 	.then((data) => {
 		userData.likes = [];
 		data.forEach((doc) => {

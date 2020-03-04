@@ -2,6 +2,7 @@ const { db } = require('../util/admin');
 
 //get all posts method
 exports.getAllPosts = (request,response) => {
+	//db query to get all posts
     db.collection('posts')
 	.orderBy('createdAt', 'desc')
 	.get()
