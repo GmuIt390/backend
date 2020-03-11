@@ -9,6 +9,10 @@ const FBAuth = require('./util/fbAuth');
 
 // const { db } = require('./util/admin');
 
+//npm install --save cors
+const cors = require('cors');
+app.use(cors());
+
 //bring methods from functions/handlers
 const { 
     getAllPosts,
