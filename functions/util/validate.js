@@ -8,6 +8,16 @@ const isEmpty = (string) => {
     }
 };
 
+//validate BMI for null values
+const isNull = (Int) => {
+    if(!Int) {
+        return true;
+    }
+    else {
+        return false;
+    }
+};
+
 //validate email
 const isEmail = (email) => {
     const regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -82,4 +92,38 @@ exports.reduceUserDetails = (data) => {
         userDetails.location = data.location;
     }
     return userDetails;
+}
+
+//validate BMI data
+exports.validateBmi = (newBmi) => {
+    let errors = {}; //initialize error object
+
+    //validate height in feet
+    if(isNull(newBmi.foot)) {
+        errors.foot = 'must not be empty';
+    }
+    else if (newBmi.foot < 0) {
+        errors.foot = 'foot must be a positive number';
+    }
+
+    //validate height in inches
+    if(isNull(newBmi.inch)) {
+        errors.inch = 'must not be empty';
+    }
+    else if (newBmi.inch > 12 || newBmi.inch < 0) {
+        errors.inch = 'inch must be between 0 and 12';
+    }
+
+    //validate weight in pounds
+    if(isNull(newBmi.pound)) {
+        errors.pound = 'must not be empty';
+    }
+    else if (newBmi.pound < 0) {
+        errors.pound = 'pound must be a positive number';
+    }
+    
+    return {
+        errors,
+        valid: Object.keys(errors).length === 0 ? true : false
+    }
 }
