@@ -2,6 +2,10 @@ const { admin,db } = require('../util/admin');
 
 const config = require('../util/config');
 
+const {
+	validateBmi
+} = require('../util/validate');
+
 //create bmi method
 exports.bmiCalc = (request,response) => {
     //db fields to create bmi
@@ -12,7 +16,13 @@ exports.bmiCalc = (request,response) => {
         pound: request.body.pound,
         bmi: 703*request.body.pound/((request.body.foot*12 + request.body.inch)**2),
         createdAt: new Date().toISOString()
-    };
+	};
+	
+	//bring validation method and validates BMI
+	const { valid,errors } = validateBmi(newBMI);
+	if (!valid) {
+		return response.status(400).json(errors);
+	}
 
     //take json to add to db
     db.collection('bmi')
