@@ -27,3 +27,27 @@ exports.bmiCalc = (request,response) => {
 		console.error(err);
 	});
 }
+
+//get all user bmi method
+exports.getBmi = (request,response) => {
+	//db query to get all posts
+    db.collection('bmi')
+    .where('userHandle', '==', request.user.handle)
+	.get()
+	.then(data => {
+		let bmi = [];
+		//for each post, push fields into array
+		data.forEach((doc) => {
+			bmi.push({
+				bmiId: doc.id,
+				bmiValue: doc.data().bmi,
+			});
+		});
+		//returns post array
+		return response.json(bmi);
+	})
+	.catch((err) => {
+		console.error(err);
+		response.status(500).json({ error: err.code});
+	});
+}
