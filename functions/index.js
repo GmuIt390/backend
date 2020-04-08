@@ -31,6 +31,10 @@ const {
     getAuthenticatedUser
  } = require('./handlers/users');
 
+ const {
+    bmiCalc
+ } = require('./handlers/statistics');
+
 //post.js routes
 app.get('/posts', getAllPosts);
 app.post('/post', FBAuth, createPost);
@@ -46,6 +50,9 @@ app.post('/login', login);
 app.post('/user', FBAuth, addUserDetails);
 app.post('/user/image', FBAuth, uploadImage);
 app.get('/user', FBAuth, getAuthenticatedUser);
+
+//statistics route
+app.post('/bmi',FBAuth,bmiCalc);
 
 //add /api extention to api links for convention
 exports.api = functions.https.onRequest(app);
