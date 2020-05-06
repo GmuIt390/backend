@@ -31,6 +31,11 @@ exports.getAllPosts = (request,response) => {
 
 //create post method
 exports.createPost = (request,response) => {
+    //validate body
+    if(request.body.body.trim() === ''){
+        return response.status(400).json({ body: 'must not be empty'});
+    }
+
     //db fields to create post
     const newPost = {
         body: request.body.body,
